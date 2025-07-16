@@ -10,7 +10,7 @@ const schema = mongoose.Schema({
     email: {type: String, required:true, unique:true},
     isMod: {type: Boolean, default:false},
     isBanned: {type:Boolean, default:false},
-})
+});
 
 class Users extends mongoose.Model {
 

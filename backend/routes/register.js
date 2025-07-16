@@ -8,6 +8,8 @@ const bcrypt = require('bcrypt-nodejs');
 const is = require('is_js');
 const jwt = require('jwt-simple');
 const config = require('../config');
+const Audit = require('../lib/Auditlogs');
+
 
 
 
@@ -36,9 +38,11 @@ router.post('/',async (req,res) => {
             exp: parseInt(Date.now() / 1000) + config.JWT.EXPIRE_TIME
         };        
         const token = jwt.encode(payload, config.JWT.SECRET);
-        res.json(Response.succesResponse({token,user:userData},Enum.HTTP_CODES.CREATED));
+        res.json(Response.successResponse({token,user:userData},Enum.HTTP_CODES.CREATED));
+        Audit.info(user.username,'register','Add','Added');
         
     }catch(err){
+        Audit.error(user.username|| 'unknown','register','ADD','Registration failed');
         res.status(err.code || Enum.HTTP_CODES.INT_SERVER_ERROR).json(Response.errorResponse(err));
     }
 });

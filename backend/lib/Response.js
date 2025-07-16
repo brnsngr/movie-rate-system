@@ -1,7 +1,7 @@
 class Response{
     constructor(){}
 
-    static succesResponse(data,code=200){
+    static successResponse(data,code=200){
         return{
             code,
             data,

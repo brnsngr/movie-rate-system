@@ -6,6 +6,8 @@ const Response = require('../lib/Response');
 const CustomError = require('../lib/Error');
 const Enum = require('../config/enum');
 const Auth = require('../lib/Auth')();
+const Audit = require('../lib/Auditlogs');
+
 
 
 router.post('/',Auth.authenticate(),async (req,res) => {
@@ -25,7 +27,8 @@ router.post('/',Auth.authenticate(),async (req,res) => {
         });
 
         await newMovie.save();
-        res.status(Enum.HTTP_CODES.CREATED).json(Response.succesResponse(newMovie,Enum.HTTP_CODES.CREATED));
+        Audit.info(user.username,'add_movies','Add','Added');
+        res.status(Enum.HTTP_CODES.CREATED).json(Response.successResponse(newMovie,Enum.HTTP_CODES.CREATED));
         
     }
     catch(err){

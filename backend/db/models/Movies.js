@@ -5,7 +5,7 @@ const schema = mongoose.Schema({
     category: {type: String, required:true,},
     rating: {type:Number, default: 0},
     votes: {type:Number, default: 0},
-})
+});
 
 class Movies extends mongoose.Model {
      

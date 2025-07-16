@@ -7,6 +7,7 @@ const CustomError = require('../lib/Error');
 const Enum = require('../config/enum');
 const config = require('../config');
 const jwt = require('jwt-simple');
+const Audit = require('../lib/Auditlogs');
 
 router.post('/',async (req,res) => {
     try{
@@ -26,10 +27,15 @@ router.post('/',async (req,res) => {
             email:user.email
         }
         let token = jwt.encode(payload, config.JWT.SECRET);
-        res.json(Response.succesResponse({ token,user:userData }));
+        res.json(Response.successResponse({ token,user:userData }));
+        Audit.info(user.username,'auth','LOGIN','User successfully authenticated');
+        
+
 
     }catch(err){
         res.status(err.code || Enum.HTTP_CODES.INT_SERVER_ERROR).json(Response.errorResponse(err));
+        Audit.error(user.username || 'unknown','auth','LOGIN_ATTEMPT','Failed login attempt');
+        
     }
 });
 

@@ -6,7 +6,6 @@ const Response = require('../lib/Response');
 const CustomError = require('../lib/Error');
 const Enum = require('../config/enum');
 const Auth = require('../lib/Auth')();
-
 //GET YOUR HOME PAGE
 router.get('/',Auth.authenticate(),async (req,res) => {
     try{
@@ -19,7 +18,8 @@ router.get('/',Auth.authenticate(),async (req,res) => {
             email:user.email,
             movies
         }
-        res.json(Response.succesResponse(user_data));
+
+        res.json(Response.successResponse(user_data));        
     }catch(err){
         res.status(err.code || Enum.HTTP_CODES.INT_SERVER_ERROR).json(Response.errorResponse(err));
     }

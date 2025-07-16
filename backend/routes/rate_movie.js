@@ -7,6 +7,7 @@ const Response = require('../lib/Response');
 const CustomError = require('../lib/Error');
 const Enum = require('../config/enum');
 const Auth = require('../lib/Auth')();
+const Audit = require('../lib/Auditlogs');
 
 
 
@@ -23,9 +24,13 @@ router.post('/',Auth.authenticate(),async (req,res) => {
 
         if(existingUserRating){
             newRating = ((existingMovie.rating * existingMovie.votes) - existingMovie.rating + rating)/newVotes;
+            Audit.info(user.username,'rate_movie','UPDATE','User rated movie');
+
         }else {
             newVotes += 1;
             newRating = ((existingMovie.rating * existingMovie.votes) + rating)/newVotes;
+            Audit.info(user.username,'rate_movie','ADD','User rated movie');
+
         }
 
 
@@ -39,11 +44,13 @@ router.post('/',Auth.authenticate(),async (req,res) => {
             {_id: existingMovie._id},
             {$set:{rating: newRating, votes: newVotes}})
 
-        res.json(Response.succesResponse({succes:true}));
+        res.json(Response.successResponse({succes:true}));
+        
         
 
     }
     catch(err){
+        Audit.error(user.username || 'unknown','rate_movie','RATE','Failed to rate the movie');
         res.status(err.code || Enum.HTTP_CODES.INT_SERVER_ERROR).json(Response.errorResponse(err));
     }
 })
